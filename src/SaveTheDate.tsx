@@ -12,40 +12,62 @@ import {
 export const SaveTheDate: React.FC = () => {
   const frame = useCurrentFrame();
 
-  // Keyframes timeline (at 30 fps):
-  // 0s-2.5s (0-75)     : Top decorative stamps & header
-  // 2.5s-5s (75-150)   : Bride & Groom playing cards
-  // 5s-7.5s (150-225)  : Center Names & Date stamp
-  // 7.5s-10s (225-300) : Venue & Fort stamp at the bottom
-  // 10s-12s (300-360)  : Smooth zoom out revealing the entire collage
-  const frames = [0, 75, 150, 225, 300, 360];
+  // 20 Seconds Timeline (600 frames at 30 fps)
+  // [0, 105]   : Top stamps (Elephants & Fan)
+  // [105, 210] : Groom Stamp (Vikas)
+  // [210, 315] : Bride Stamp (Mansi)
+  // [315, 420] : Names & Date Stamp
+  // [420, 510] : Jodhpur Venue Stamp
+  // [510, 600] : Full Zoom Out Reveal
+  const keyframes = [0, 90, 180, 270, 375, 480, 570, 600];
 
+  // Scale (Zoom levels)
   const scale = interpolate(
     frame,
-    frames,
-    [2.6, 2.8, 2.5, 2.7, 1.0, 1.0],
+    keyframes,
+    [2.3, 2.3, 2.2, 2.2, 2.1, 2.2, 1.0, 1.0],
     {
-      easing: Easing.bezier(0.25, 0.1, 0.25, 1.0),
+      easing: Easing.inOut(Easing.cubic),
       extrapolateRight: 'clamp',
     }
   );
 
+  // Horizontal pan (X-axis)
   const translateX = interpolate(
     frame,
-    frames,
-    [20, -110, 80, -40, 0, 0],
+    keyframes,
+    [
+      0,     // Start centered on top stamps
+      180,   // Center on Vikas (Left stamp)
+      -180,  // Center on Mansi (Right stamp)
+      120,   // Center on Date stamp & Names
+      -120,  // Center on Jodhpur stamp
+      0,     // Center for full reveal
+      0,
+      0,
+    ],
     {
-      easing: Easing.bezier(0.25, 0.1, 0.25, 1.0),
+      easing: Easing.inOut(Easing.cubic),
       extrapolateRight: 'clamp',
     }
   );
 
+  // Vertical pan (Y-axis)
   const translateY = interpolate(
     frame,
-    frames,
-    [-420, -120, 160, 480, 0, 0],
+    keyframes,
+    [
+      650,   // Focus on top (Elephants & Fan)
+      250,   // Vikas stamp
+      250,   // Mansi stamp
+      -100,  // Names & Date
+      -450,  // Jodhpur venue stamp
+      0,     // Centered full poster
+      0,
+      0,
+    ],
     {
-      easing: Easing.bezier(0.25, 0.1, 0.25, 1.0),
+      easing: Easing.inOut(Easing.cubic),
       extrapolateRight: 'clamp',
     }
   );
@@ -63,7 +85,7 @@ export const SaveTheDate: React.FC = () => {
       {/* Background Track */}
       <Audio src={staticFile('music.mp3')} />
 
-      {/* Dynamic 2.5D Camera Viewport */}
+      {/* 2.5D Animated Camera Canvas */}
       <div
         style={{
           width: 1080,

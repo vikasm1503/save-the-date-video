@@ -12,37 +12,38 @@ import {
 export const SaveTheDate: React.FC = () => {
   const frame = useCurrentFrame();
 
-  // Keyframes timeline across 600 frames (20 seconds @ 30 fps):
-  // 0 - 90    : [0s - 3s]     Zoomed into Bottom Title
-  // 90 - 130  : [3s - 4.3s]   Transition (pull back & pan to Date)
-  // 130 - 210 : [4.3s - 7s]   Hold & Zoomed on Date Stamp (30, 31 / 01 / 26)
-  // 210 - 250 : [7s - 8.3s]   Transition (pull back & pan to Location)
-  // 250 - 330 : [8.3s - 11s]  Hold & Zoomed on Location Stamp (Nagda)
-  // 330 - 370 : [11s - 12.3s] Transition (pull back & pan up to Guy's face)
-  // 370 - 440 : [12.3s - 14.6s] Hold & Zoomed on Vikas (Guy's Face)
-  // 440 - 510 : [14.6s - 17s] Smooth glide to Mansi (Girl's Face)
-  // 510 - 580 : [17s - 19.3s] Smooth Pull Back Zoom Out
-  // 580 - 600 : [19.3s - 20s] Full Card Reveal Hold
+  // 20-Second Timeline (600 frames total at 30 fps)
+  // [0 - 75]    (0s - 2.5s)   : HOLD on Bottom Taglines ("Here's to love..." & "The quirkiest save the date")
+  // [75 - 105]  (2.5s - 3.5s) : PULL-BACK transition to Date Stamp
+  // [105 - 195] (3.5s - 6.5s) : PUNCH IN & HOLD on Date Stamp (30, 31 / 01 / 26)
+  // [195 - 225] (6.5s - 7.5s) : PULL-BACK transition to Location Stamp
+  // [225 - 315] (7.5s - 10.5s): PUNCH IN & HOLD on Location Stamp (📍 NAGDA & Fort)
+  // [315 - 345] (10.5s - 11.5s): PULL-BACK transition moving up to Vikas
+  // [345 - 420] (11.5s - 14s) : PUNCH IN & HOLD on Guy's Face (Vikas - Eye-Level)
+  // [420 - 450] (14s - 15s)   : GLIDE across to Mansi
+  // [450 - 510] (15s - 17s)   : HOLD on Girl's Face (Mansi - Eye-Level)
+  // [510 - 575] (17s - 19.2s) : GRAND ZOOM-OUT REVEAL (Pull back to full poster)
+  // [575 - 600] (19.2s - 20s) : Full Poster Hold
   const keyframes = [
-    0, 90,
-    130, 210,
-    250, 330,
-    370, 440,
-    510,
-    580, 600
+    0, 75,
+    105, 195,
+    225, 315,
+    345, 420,
+    450, 510,
+    575, 600
   ];
 
-  // Scale (Zoom levels with pull-backs in between)
+  // Dynamic Scale: Punches in on subjects, dips during travel for that cinematic dynamic feel
   const scale = interpolate(
     frame,
     keyframes,
     [
-      2.5, 2.5,  // 1. Bottom Title (Zoomed in)
-      2.7, 2.7,  // 2. Date Stamp (Zoomed in)
-      2.7, 2.7,  // 3. Nagda Location Stamp (Zoomed in)
-      2.6, 2.6,  // 4. Guy's Face (Vikas) (Zoomed in)
-      2.6,       // 5. Girl's Face (Mansi) (Zoomed in)
-      1.0, 1.0   // 6. Full Poster (Completely Zoomed Out)
+      2.8, 2.8,  // 1. Bottom Tagline punch
+      3.2, 3.2,  // 2. Date Stamp punch (close-up)
+      3.1, 3.1,  // 3. Nagda Stamp punch (close-up)
+      2.8, 2.8,  // 4. Vikas Face punch
+      2.8, 2.8,  // 5. Mansi Face punch
+      1.0, 1.0   // 6. Complete Poster Reveal
     ],
     {
       easing: Easing.inOut(Easing.cubic),
@@ -50,16 +51,16 @@ export const SaveTheDate: React.FC = () => {
     }
   );
 
-  // Horizontal pan (X-axis)
+  // Horizontal tracking (X-axis)
   const translateX = interpolate(
     frame,
     keyframes,
     [
-      0, 0,        // 1. Bottom Title (Center)
-      300, 300,    // 2. Date Stamp (Bottom-Left)
-      -220, -220,  // 3. Location Stamp (Bottom-Right)
-      250, 250,    // 4. Guy's Face (Left Stamp)
-      -250,        // 5. Girl's Face (Right Stamp)
+      0, 0,        // 1. Bottom Tagline (Center)
+      330, 330,    // 2. Date Stamp (Bottom-Left)
+      -220, -220,  // 3. Nagda Stamp (Bottom-Right)
+      270, 270,    // 4. Guy's Face (Vikas - Left Stamp center)
+      -270, -270,  // 5. Girl's Face (Mansi - Right Stamp center)
       0, 0         // 6. Full Reveal (Center)
     ],
     {
@@ -68,17 +69,17 @@ export const SaveTheDate: React.FC = () => {
     }
   );
 
-  // Vertical pan (Y-axis)
+  // Vertical tracking (Y-axis)
   const translateY = interpolate(
     frame,
     keyframes,
     [
-      -850, -850,  // 1. Bottom Title
-      -420, -420,  // 2. Date Stamp
-      -580, -580,  // 3. Location Stamp
-      380, 380,    // 4. Guy's Face (Vikas)
-      380,         // 5. Girl's Face (Mansi)
-      0, 0         // 6. Full Reveal
+      -1120, -1120, // 1. Bottom Tagline ("Here's to love..." + "quirkiest save the date")
+      -360, -360,   // 2. Date Stamp (Centered directly on 30 31 / 01 / 26)
+      -670, -670,   // 3. Nagda Stamp (Centered on 📍 NAGDA and the fort)
+      470, 470,     // 4. Guy's Face (Vikas - Head & Eyes level, not chest)
+      470, 470,     // 5. Girl's Face (Mansi - Head & Eyes level)
+      0, 0          // 6. Full Reveal (Center)
     ],
     {
       easing: Easing.inOut(Easing.cubic),
@@ -99,7 +100,7 @@ export const SaveTheDate: React.FC = () => {
       {/* Background Track */}
       <Audio src={staticFile('music.mp3')} />
 
-      {/* Dynamic 2.5D Camera Viewport */}
+      {/* 2.5D Animated Camera Viewport */}
       <div
         style={{
           width: 1080,

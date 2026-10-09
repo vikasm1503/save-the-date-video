@@ -12,20 +12,38 @@ import {
 export const SaveTheDate: React.FC = () => {
   const frame = useCurrentFrame();
 
-  // 20 Seconds Timeline (600 frames at 30 fps)
-  // [0, 105]   : Top stamps (Elephants & Fan)
-  // [105, 210] : Groom Stamp (Vikas)
-  // [210, 315] : Bride Stamp (Mansi)
-  // [315, 420] : Names & Date Stamp
-  // [420, 510] : Jodhpur Venue Stamp
-  // [510, 600] : Full Zoom Out Reveal
-  const keyframes = [0, 90, 180, 270, 375, 480, 570, 600];
+  // Keyframes timeline across 600 frames (20 seconds @ 30 fps):
+  // 0 - 90    : [0s - 3s]     Zoomed into Bottom Title
+  // 90 - 130  : [3s - 4.3s]   Transition (pull back & pan to Date)
+  // 130 - 210 : [4.3s - 7s]   Hold & Zoomed on Date Stamp (30, 31 / 01 / 26)
+  // 210 - 250 : [7s - 8.3s]   Transition (pull back & pan to Location)
+  // 250 - 330 : [8.3s - 11s]  Hold & Zoomed on Location Stamp (Nagda)
+  // 330 - 370 : [11s - 12.3s] Transition (pull back & pan up to Guy's face)
+  // 370 - 440 : [12.3s - 14.6s] Hold & Zoomed on Vikas (Guy's Face)
+  // 440 - 510 : [14.6s - 17s] Smooth glide to Mansi (Girl's Face)
+  // 510 - 580 : [17s - 19.3s] Smooth Pull Back Zoom Out
+  // 580 - 600 : [19.3s - 20s] Full Card Reveal Hold
+  const keyframes = [
+    0, 90,
+    130, 210,
+    250, 330,
+    370, 440,
+    510,
+    580, 600
+  ];
 
-  // Scale (Zoom levels)
+  // Scale (Zoom levels with pull-backs in between)
   const scale = interpolate(
     frame,
     keyframes,
-    [2.3, 2.3, 2.2, 2.2, 2.1, 2.2, 1.0, 1.0],
+    [
+      2.5, 2.5,  // 1. Bottom Title (Zoomed in)
+      2.7, 2.7,  // 2. Date Stamp (Zoomed in)
+      2.7, 2.7,  // 3. Nagda Location Stamp (Zoomed in)
+      2.6, 2.6,  // 4. Guy's Face (Vikas) (Zoomed in)
+      2.6,       // 5. Girl's Face (Mansi) (Zoomed in)
+      1.0, 1.0   // 6. Full Poster (Completely Zoomed Out)
+    ],
     {
       easing: Easing.inOut(Easing.cubic),
       extrapolateRight: 'clamp',
@@ -37,14 +55,12 @@ export const SaveTheDate: React.FC = () => {
     frame,
     keyframes,
     [
-      0,     // Start centered on top stamps
-      180,   // Center on Vikas (Left stamp)
-      -180,  // Center on Mansi (Right stamp)
-      120,   // Center on Date stamp & Names
-      -120,  // Center on Jodhpur stamp
-      0,     // Center for full reveal
-      0,
-      0,
+      0, 0,        // 1. Bottom Title (Center)
+      300, 300,    // 2. Date Stamp (Bottom-Left)
+      -220, -220,  // 3. Location Stamp (Bottom-Right)
+      250, 250,    // 4. Guy's Face (Left Stamp)
+      -250,        // 5. Girl's Face (Right Stamp)
+      0, 0         // 6. Full Reveal (Center)
     ],
     {
       easing: Easing.inOut(Easing.cubic),
@@ -57,14 +73,12 @@ export const SaveTheDate: React.FC = () => {
     frame,
     keyframes,
     [
-      650,   // Focus on top (Elephants & Fan)
-      250,   // Vikas stamp
-      250,   // Mansi stamp
-      -100,  // Names & Date
-      -450,  // Jodhpur venue stamp
-      0,     // Centered full poster
-      0,
-      0,
+      -850, -850,  // 1. Bottom Title
+      -420, -420,  // 2. Date Stamp
+      -580, -580,  // 3. Location Stamp
+      380, 380,    // 4. Guy's Face (Vikas)
+      380,         // 5. Girl's Face (Mansi)
+      0, 0         // 6. Full Reveal
     ],
     {
       easing: Easing.inOut(Easing.cubic),
@@ -85,7 +99,7 @@ export const SaveTheDate: React.FC = () => {
       {/* Background Track */}
       <Audio src={staticFile('music.mp3')} />
 
-      {/* 2.5D Animated Camera Canvas */}
+      {/* Dynamic 2.5D Camera Viewport */}
       <div
         style={{
           width: 1080,
